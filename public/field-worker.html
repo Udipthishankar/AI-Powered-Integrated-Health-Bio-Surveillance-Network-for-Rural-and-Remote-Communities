@@ -1,1 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Field Worker Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>📝 Field Data Ingestion Portal</h1>
+        <p>HealthTech Mobile/Web Node</p>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="field-worker.html" class="active">Field Entry</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="analytics.html">Analytics</a>
+        <a href="telehealth.html">Telehealth</a>
+    </nav>
+    <div class="container">
+        <section class="card">
+            <h2>New Patient Screening Form</h2>
+            <form id="patientForm">
+                <label>Patient Full Name:</label>
+                <input type="text" id="name" required placeholder="Enter patient name">
+
+                <label>Age:</label>
+                <input type="number" id="age" required placeholder="Enter age">
+
+                <label>Village / Region Location:</label>
+                <input type="text" id="location" required placeholder="e.g., North District Sector 4">
+
+                <label>Symptoms & Observation Notes:</label>
+                <textarea id="symptoms" rows="3" placeholder="e.g., persistent dry cough, fatigue, body ache" required></textarea>
+
+                <label>Body Temperature (°C):</label>
+                <input type="number" step="0.1" id="temperature" required placeholder="37.2">
+
+                <label>Heart Rate (BPM):</label>
+                <input type="number" id="heartRate" required placeholder="80">
+
+                <button type="submit">Submit Record & Run Risk Engine</button>
+            </form>
+            <p id="successMsg" style="color: green; margin-top: 1rem; font-weight: bold; display: none;">Record successfully uploaded to central server!</p>
+        </section>
+    </div>
+    <script>
+        document.getElementById('patientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('name').value,
+                age: document.getElementById('age').value,
+                location: document.getElementById('location').value,
+                symptoms: document.getElementById('symptoms').value,
+                temperature: parseFloat(document.getElementById('temperature').value),
+                heartRate: parseInt(document.getElementById('heartRate').value)
+            };
+            const res = await fetch('/api/patients', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if(res.ok) {
+                document.getElementById('patientForm').reset();
+                const msg = document.getElementById('successMsg');
+                msg.style.display = 'block';
+                setTimeout(() => msg.style.display = 'none', 4000);
+            }
+        });
+    </script>
+</body>
+</html>
 
